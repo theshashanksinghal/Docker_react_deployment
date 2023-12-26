@@ -6,7 +6,9 @@ services:
       - POSTGRES_PASSWORD=postgres_password
   redis:
     image: 'redis:latest'
-  server:
+  # We changed the name from server to api because since we are using docker-compose, we can call other containers with their names along with the port
+  # So while defining the host name of server we can get some error because "server" is a keyword used while defing the routing rules in nginx.
+  api:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
@@ -28,6 +30,8 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
+    environment:
+      - WDS_SOCKET_PORT=0
 
   worker:
     build:
@@ -39,3 +43,11 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'

@@ -3,4 +3,5 @@ WORKDIR "/app"
 COPY ./package.json ./
 RUN npm install
 COPY . .
+# NOTE: "dev" is the comand that we defined inside package.json file in key-value format
 CMD ["npm", "run", "dev"]
